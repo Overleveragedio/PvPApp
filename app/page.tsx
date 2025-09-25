@@ -1,6 +1,4 @@
-import Image from "next/image";
 import Hero from "./home/Hero";
-import HomeCard from "@/components/home/Card";
 import StatsSection from "./home/Stats";
 import HowItWorks from "./home/HowItWorks";
 import Features from "./home/Features";
