@@ -1,5 +1,6 @@
 import Button from "@/components/Button";
 import SectionHeading from "@/components/typography/SectionHeading";
+import Link from "next/link";
 
 const CallToAction = () => {
     return (
@@ -15,9 +16,11 @@ const CallToAction = () => {
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <Button size="md">
-                            Enter Competition →
-                        </Button>
+                        <Link href={"/competitions"}>
+                            <Button size="md">
+                                Enter Competition →
+                            </Button>
+                        </Link>
                         <Button variant="secondary" size="md">
                             View Leaderboard
                         </Button>

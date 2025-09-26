@@ -1,12 +1,12 @@
-import Navbar from "@/components/competitions/Navbar";
 import Hero from "./sections/Hero";
+import Board from "./sections/Board";
 
 const Competitions = () => {
     return (
-        <>
-            <Navbar />
+        <div className="mx-auto max-w-7xl">
             <Hero />
-        </>
+            <Board />
+        </div>
     )
 }
 export default Competitions;
