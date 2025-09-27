@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Button from "@/components/Button";
-import { Zap, Trophy, TrendingUp, User, Wallet, Search } from "lucide-react";
+import { Trophy, TrendingUp, Search } from "lucide-react";
 import SectionHeading from "../typography/SectionHeading";
 import { usePathname } from "next/navigation";
 import { useWalletConnection } from "@/hooks/useWalletConnection";

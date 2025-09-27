@@ -1,7 +1,6 @@
-import { Trophy, TrendingUp, Users, Clock, User, StarIcon, Sparkle, Sparkles } from "lucide-react";
+import { Trophy, TrendingUp, Users, Clock, User, StarIcon, Sparkles } from "lucide-react";
 import Button from "@/components/Button";
 import SectionHeading from "@/components/typography/SectionHeading";
-import Link from "next/link";
 
 const Hero = () => {
     return (

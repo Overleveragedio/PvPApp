@@ -1,9 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useConnect, useAccount, useDisconnect } from 'wagmi'
+import { Connector, useConnect } from 'wagmi'
 import { X, Wallet, ExternalLink } from 'lucide-react'
-import Button from '@/components/Button'
 
 interface WalletConnectionModalProps {
     isOpen: boolean
@@ -12,11 +11,9 @@ interface WalletConnectionModalProps {
 
 const WalletConnectionModal = ({ isOpen, onClose }: WalletConnectionModalProps) => {
     const { connectors, connect, isPending } = useConnect()
-    const { isConnected } = useAccount()
-    const { disconnect } = useDisconnect()
     const [connectingWallet, setConnectingWallet] = useState<string | null>(null)
 
-    const handleConnect = async (connector: any) => {
+    const handleConnect = async (connector: Connector) => {
         try {
             setConnectingWallet(connector.id)
             await connect({ connector })
