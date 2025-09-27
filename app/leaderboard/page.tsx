@@ -1,6 +1,5 @@
 "use client";
 import { RefreshCw, Trophy, Users } from "lucide-react";
-import AppLayout from "@/layouts/AppLayout";
 import TabNavigation from "@/components/ui/TabNavigation";
 import FilterSelect from "@/components/ui/FilterSelect";
 
