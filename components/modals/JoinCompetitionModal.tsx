@@ -117,7 +117,7 @@ const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionM
                             )}
                         </div>
 
-                        <div className="space-y-2">
+                        <div className={`space-y-2 ${showAllPayouts ? 'max-h-48 overflow-y-auto pr-2' : ''}`}>
                             {visiblePayouts.map((payout, index) => (
                                 <div
                                     key={index}
@@ -145,7 +145,7 @@ const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionM
                     </div>
 
                     {/* Join Button */}
-                    <Button className="w-full mb-4">
+                    <Button className="w-full">
                         <Trophy className="w-4 h-4" />
                         Join Competition
                     </Button>
