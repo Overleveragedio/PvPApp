@@ -9,6 +9,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
+import Link from 'next/link'
 
 interface JoinCompetitionModalProps {
     isOpen: boolean
@@ -145,10 +146,12 @@ const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionM
                     </div>
 
                     {/* Join Button */}
-                    <Button className="w-full">
-                        <Trophy className="w-4 h-4" />
-                        Join Competition
-                    </Button>
+                    <Link href={"/trade"}>
+                        <Button className="w-full">
+                            <Trophy className="w-4 h-4" />
+                            Join Competition
+                        </Button>
+                    </Link>
 
                     {/* Footer Note - More compact */}
                     <p className="text-slate-400 text-xs text-center">

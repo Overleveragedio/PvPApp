@@ -15,6 +15,7 @@ const Chart = ({ symbol = 'BTC', interval: initialInterval = '1m' }: ChartProps)
     const chartContainerRef = useRef<HTMLDivElement>(null)
     const chartRef = useRef<IChartApi | null>(null)
     const candlestickSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null)
+    const resizeObserverRef = useRef<ResizeObserver | null>(null)
 
     // Add state for current interval
     const [currentInterval, setCurrentInterval] = useState(initialInterval)
@@ -68,7 +69,6 @@ const Chart = ({ symbol = 'BTC', interval: initialInterval = '1m' }: ChartProps)
         }
     }, [candleData])
 
-    // Initialize chart
     useEffect(() => {
         if (!chartContainerRef.current) return
 
@@ -115,25 +115,43 @@ const Chart = ({ symbol = 'BTC', interval: initialInterval = '1m' }: ChartProps)
         chartRef.current = chart
         candlestickSeriesRef.current = candlestickSeries
 
-        // Handle resize
+        // Handle resize with ResizeObserver for better performance
         const handleResize = () => {
             if (container && chartRef.current) {
-                chartRef.current.applyOptions({
-                    width: container.clientWidth,
-                    height: container.clientHeight,
-                })
+                const newWidth = container.clientWidth
+                const newHeight = container.clientHeight
+
+                if (newWidth > 0 && newHeight > 0) {
+                    chartRef.current.applyOptions({
+                        width: newWidth,
+                        height: newHeight,
+                    })
+                }
             }
         }
 
-        window.addEventListener('resize', handleResize)
+        // Use ResizeObserver for more accurate resize detection
+        if (window.ResizeObserver) {
+            resizeObserverRef.current = new ResizeObserver(handleResize)
+            resizeObserverRef.current.observe(container)
+        } else {
+            // Fallback to window resize event
+            window.addEventListener('resize', handleResize)
+        }
 
         return () => {
-            window.removeEventListener('resize', handleResize)
+            if (resizeObserverRef.current) {
+                resizeObserverRef.current.disconnect()
+            } else {
+                window.removeEventListener('resize', handleResize)
+            }
+
             if (chartRef.current) {
                 chartRef.current.remove()
             }
         }
     }, [])
+
 
     // Update chart data when candleData changes
     useEffect(() => {
@@ -149,7 +167,7 @@ const Chart = ({ symbol = 'BTC', interval: initialInterval = '1m' }: ChartProps)
 
     if (error) {
         return (
-            <div className="flex items-center justify-center h-full bg-background-tertiary rounded-lg border border-red-500/20">
+            <div className="flex items-center justify-center h-full bg-background-tertiary border border-red-500/20">
                 <div className="text-center">
                     <div className="text-red-400 mb-2">⚠️ Chart Error</div>
                     <div className="text-slate-400 text-sm">
@@ -170,7 +188,7 @@ const Chart = ({ symbol = 'BTC', interval: initialInterval = '1m' }: ChartProps)
     }
 
     return (
-        <div className="h-full w-full bg-background rounded-lg border border-slate-700/30 overflow-hidden flex flex-col">
+        <div className="h-full w-full bg-background border border-slate-700/30 overflow-hidden flex flex-col">
             {/* Market Data Header */}
             <MarketHeader
                 symbol={symbol}
@@ -203,7 +221,7 @@ const Chart = ({ symbol = 'BTC', interval: initialInterval = '1m' }: ChartProps)
             {/* Chart Container */}
             <div
                 ref={chartContainerRef}
-                className="w-full flex-1"
+                className="w-full flex-1 min-h-0"
             />
         </div>
     )

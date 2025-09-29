@@ -37,9 +37,10 @@ export default function TradeLayout({
                 </div>
 
                 {/* Main Content */}
-                <div className="relative z-10">
-                    <TradeNavbar />
-                    {children}
+                <div className="relative h-screen z-10">
+                    <div className="w-full h-full">
+                        {children}
+                    </div>
                 </div>
             </QueryClientProvider>
         </WagmiProvider>

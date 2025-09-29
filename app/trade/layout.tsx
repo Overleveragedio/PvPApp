@@ -6,9 +6,11 @@ export default function Layout({
     children: React.ReactNode;
 }>) {
     return (
-        <TradeLayout>
-            {children}
-        </TradeLayout>
+        <>
+            <TradeLayout>
+                {children}
+            </TradeLayout>
+        </>
     );
 }
 // <AppLayout>
