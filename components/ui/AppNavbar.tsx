@@ -4,7 +4,7 @@ import { Trophy, TrendingUp, Search, ChevronDown, User, BarChart3, Wallet, Setti
 import SectionHeading from "../typography/SectionHeading";
 import { usePathname } from "next/navigation";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
-import WalletConnectionModal from "../modals/WalletConnectionModal";
+import WalletConnectionModal from "../modals/SignInModal";
 import { useState, useRef, useEffect } from "react";
 
 const AppNavbar = () => {
