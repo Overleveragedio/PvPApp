@@ -5,6 +5,7 @@ interface ButtonProps {
     onClick?: () => void;
     disabled?: boolean;
     className?: string;
+    type?: 'button' | 'submit' | 'reset';
 }
 
 const Button = ({
@@ -13,7 +14,8 @@ const Button = ({
     size = 'md',
     onClick,
     disabled = false,
-    className = ''
+    className = '',
+    type = 'button'
 }: ButtonProps) => {
     const baseStyles = "font-semibold rounded-2xl transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer";
 
@@ -30,6 +32,7 @@ const Button = ({
 
     return (
         <button
+            type={type}
             className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
             onClick={onClick}
             disabled={disabled}
