@@ -14,6 +14,7 @@ const AppNavbar = () => {
     const { isModalOpen, openModal, closeModal, address, disconnect } = useWalletConnection();
     const { isAuthenticated, isLoading } = useAuth()
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const isActive = (path: string) => pathname === path;
@@ -28,6 +29,16 @@ const AppNavbar = () => {
             ? 'text-primary bg-primary/20 nav-link-glow after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-18 after:h-0.5 after:bg-primary after:rounded-full'
             : 'text-slate-300 hover:text-white hover:bg-primary/20'
         }`;
+
+    // Handle scroll detection
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 10);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -53,7 +64,10 @@ const AppNavbar = () => {
 
     return (
         <>
-            <nav className="bg-background border-b border-slate-700/30 px-4 py-3">
+            <nav className={`fixed top-0 left-0 right-0 border-b border-slate-700/30 z-50 px-4 py-3 transition-all duration-300 ${isScrolled
+                ? 'bg-background/95 backdrop-blur-md shadow-lg'
+                : 'bg-transparent'
+                }`}>
                 <div className="container mx-auto flex items-center justify-between max-w-7xl mx-auto">
                     {/* Logo */}
                     <div className="flex items-center gap-3">
@@ -98,9 +112,9 @@ const AppNavbar = () => {
                     {/* Right Side Actions */}
                     <div className="flex items-center gap-3">
                         {/* Search Icon */}
-                        <button className="p-2 text-slate-400 hover:text-white transition-colors">
+                        {/* <button className="p-2 text-slate-400 hover:text-white transition-colors">
                             <Search className="w-5 h-5" />
-                        </button>
+                        </button> */}
 
                         {/* Wallet Connection */}
                         {isAuthenticated ? (
@@ -194,6 +208,9 @@ const AppNavbar = () => {
                     </div>
                 </div>
             </nav>
+
+            {/* Spacer to prevent content from hiding under fixed navbar */}
+            <div className="h-[76px]" />
 
             {/* Wallet Connection Modal */}
             <WalletConnectionModal isOpen={isModalOpen} onClose={closeModal} />

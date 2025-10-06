@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { useAccount, useDisconnect } from 'wagmi'
 import { clearTokens, getTokens, signOut } from '@/lib/auth'
-import { useQuery } from '@tanstack/react-query'
 import { getUser } from '@/lib/user'
 
 interface AuthContextType {
