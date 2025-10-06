@@ -1,7 +1,9 @@
 "use client";
-import { RefreshCw, Trophy, Users } from "lucide-react";
+import { RefreshCw, Trophy } from "lucide-react";
 import TabNavigation from "@/components/ui/TabNavigation";
 import FilterSelect from "@/components/ui/FilterSelect";
+import TopTradersShowcase from "@/components/leaderboard/TopTradersShowcase";
+import LeaderboardTable from "@/components/leaderboard/LeaderboardTable";
 
 const tabsData = [
     { id: "current", label: "Current", count: 0 },
@@ -21,6 +23,121 @@ const timeOptions = [
     { value: "last-hour", label: "Last Hour" },
     { value: "last-day", label: "Last Day" },
     { value: "last-week", label: "Last Week" }
+];
+
+// Mock data for top 3 traders with pixel art avatars
+const topTraders = [
+    {
+        rank: 1,
+        name: "BabyKnight",
+        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=BabyKnight",
+        rankBadge: "Challenger",
+        latestStats: "42 - 21",
+        winRate: "64%",
+        kda: "1.23"
+    },
+    {
+        rank: 2,
+        name: "Rootless",
+        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=Rootless",
+        rankBadge: "Challenger",
+        latestStats: "42 - 21",
+        winRate: "64%",
+        kda: "1.23"
+    },
+    {
+        rank: 3,
+        name: "Teodor2000",
+        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=Teodor2000",
+        rankBadge: "Challenger",
+        latestStats: "42 - 21",
+        winRate: "64%",
+        kda: "1.23"
+    }
+];
+
+// Mock data for leaderboard table
+const leaderboardData = [
+    {
+        rank: 1,
+        username: "BabyKnight",
+        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=BabyKnight",
+        trades: 156,
+        totalGainUSD: "12,456.78",
+        percentageGained: "45.32"
+    },
+    {
+        rank: 2,
+        username: "Rootless",
+        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=Rootless",
+        trades: 142,
+        totalGainUSD: "10,234.92",
+        percentageGained: "38.75"
+    },
+    {
+        rank: 3,
+        username: "Teodor2000",
+        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=Teodor2000",
+        trades: 128,
+        totalGainUSD: "8,567.45",
+        percentageGained: "32.18"
+    },
+    {
+        rank: 4,
+        username: "CryptoNinja",
+        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=CryptoNinja",
+        trades: 115,
+        totalGainUSD: "7,823.34",
+        percentageGained: "28.94"
+    },
+    {
+        rank: 5,
+        username: "MoonWalker",
+        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=MoonWalker",
+        trades: 103,
+        totalGainUSD: "6,945.21",
+        percentageGained: "25.67"
+    },
+    {
+        rank: 6,
+        username: "DiamondHands",
+        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=DiamondHands",
+        trades: 98,
+        totalGainUSD: "6,123.89",
+        percentageGained: "22.41"
+    },
+    {
+        rank: 7,
+        username: "WhaleTrader",
+        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=WhaleTrader",
+        trades: 87,
+        totalGainUSD: "5,456.72",
+        percentageGained: "19.85"
+    },
+    {
+        rank: 8,
+        username: "BullRunner",
+        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=BullRunner",
+        trades: 76,
+        totalGainUSD: "4,234.56",
+        percentageGained: "15.23"
+    },
+    {
+        rank: 9,
+        username: "SatoshiFan",
+        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=SatoshiFan",
+        trades: 69,
+        totalGainUSD: "3,567.89",
+        percentageGained: "12.56"
+    },
+    {
+        rank: 10,
+        username: "DegenKing",
+        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=DegenKing",
+        trades: 61,
+        totalGainUSD: "2,456.34",
+        percentageGained: "8.94"
+    }
 ];
 
 const Leaderboard = () => {
@@ -69,7 +186,7 @@ const Leaderboard = () => {
             </div>
 
             {/* Tab Navigation */}
-            <div className="mb-2">
+            <div className="mb-6">
                 <TabNavigation
                     tabs={tabsData}
                     defaultActiveTab="current"
@@ -78,10 +195,13 @@ const Leaderboard = () => {
                 />
             </div>
 
-            {/* Global Leaderboard Card */}
-            <div className="bg-background-tertiary border border-slate-700/30 rounded-xl p-6">
+            {/* Top 3 Traders Cards */}
+            <TopTradersShowcase traders={topTraders} />
+
+            {/* Global Leaderboard Table */}
+            <div className="backdrop-blur-lg border border-slate-700/30 rounded-xl p-6">
                 {/* Card Header */}
-                <div className="flex flex-col gap-1 mb-4">
+                <div className="flex flex-col gap-1 mb-6">
                     <div className="flex items-center gap-2">
                         <Trophy className="w-6 h-6 text-primary" />
                         <h2 className="text-xl font-bold text-white">Global Leaderboard</h2>
@@ -89,16 +209,8 @@ const Leaderboard = () => {
                     <p className="text-slate-400 text-sm">Top performers across all active competitions</p>
                 </div>
 
-                {/* Empty State */}
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                    <Users className="w-16 h-16 text-slate-600 mb-4" />
-                    <h3 className="text-xl font-semibold text-slate-400 mb-2">
-                        Global leaderboard coming soon...
-                    </h3>
-                    <p className="text-slate-500">
-                        Select a specific competition to view rankings
-                    </p>
-                </div>
+                {/* Leaderboard Table */}
+                <LeaderboardTable data={leaderboardData} />
             </div>
         </div>
     )

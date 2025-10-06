@@ -1,0 +1,6 @@
+import { api } from "./api"
+
+export const getUser = async (): Promise<User> => {
+    const response = await api.get(`/users/me`)
+    return response.data
+}

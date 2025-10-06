@@ -1,3 +1,4 @@
+import { AuthProvider } from "@/contexts/AuthContext";
 import AppLayout from "@/layouts/AppLayout";
 
 export default function CompetitionsLayout({
@@ -7,7 +8,9 @@ export default function CompetitionsLayout({
 }>) {
     return (
         <AppLayout>
-            {children}
+            <AuthProvider>
+                {children}
+            </AuthProvider>
         </AppLayout>
     );
 }

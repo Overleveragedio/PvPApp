@@ -12,6 +12,8 @@ import {
     DialogFooter,
 } from '@/components/ui/dialog'
 import Button from '@/components/Button'
+import { signUpWithEmail, signInWithEmail, setTokens } from '@/lib/auth'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface EmailSignInModalProps {
     isOpen: boolean
@@ -84,6 +86,7 @@ const EmailSignInModal = ({ isOpen, onClose }: EmailSignInModalProps) => {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [isSignUp, setIsSignUp] = useState(false)
+    const { login } = useAuth()
 
     const validationSchema = Yup.object({
         email: Yup.string()
@@ -99,18 +102,47 @@ const EmailSignInModal = ({ isOpen, onClose }: EmailSignInModalProps) => {
         }),
     })
 
-    const handleSubmit = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
+    const handleSubmit = async (values: FormValues, { setSubmitting, setFieldError }: FormikHelpers<FormValues>) => {
         try {
-            // TODO: Implement your authentication logic here
-            console.log('Form values:', values)
-            console.log('Mode:', isSignUp ? 'Sign Up' : 'Sign In')
+            let response
 
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000))
+            if (isSignUp) {
+                response = await signUpWithEmail({
+                    email: values.email,
+                    password: values.password,
+                    confirmPassword: values.confirmPassword,
+                })
+            } else {
+                response = await signInWithEmail({
+                    email: values.email,
+                    password: values.password,
+                })
+            }
 
+            // Store tokens
+            setTokens(response.access_token, response.refresh_token)
+
+            // Update auth context
+            login()
+
+            // Close modal on success
             onClose()
         } catch (error) {
             console.error('Authentication failed:', error)
+
+            // Handle specific error cases
+            if (error instanceof Error) {
+                if (error.message.includes('email')) {
+                    setFieldError('email', error.message)
+                } else if (error.message.includes('password')) {
+                    setFieldError('password', error.message)
+                } else if (error.message.includes('confirm')) {
+                    setFieldError('confirmPassword', error.message)
+                } else {
+                    // General error - you might want to show a toast or general error message
+                    console.error('Authentication error:', error.message)
+                }
+            }
         } finally {
             setSubmitting(false)
         }
