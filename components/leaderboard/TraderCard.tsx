@@ -100,7 +100,7 @@ const TraderCard = ({
                 {/* Stats Row */}
                 <div className="grid grid-cols-3 gap-4 mb-2">
                     <div>
-                        <p className="text-muted-foreground text-[10px] uppercase mb-1">Latest Stats</p>
+                        <p className="text-muted-foreground text-[10px] uppercase mb-1">Placed/Played</p>
                         <p className="text-white text-sm font-medium">{latestStats}</p>
                     </div>
                     <div>
@@ -108,7 +108,7 @@ const TraderCard = ({
                         <p className={`text-sm font-medium ${getWinRateColor()}`}>{winRate}</p>
                     </div>
                     <div>
-                        <p className="text-muted-foreground text-[10px] uppercase mb-1">K/D/A</p>
+                        <p className="text-muted-foreground text-[10px] uppercase mb-1">Earnings</p>
                         <p className="text-white text-sm font-medium">{kda}</p>
                     </div>
                 </div>
