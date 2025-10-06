@@ -14,12 +14,6 @@ const TradeSubNavbar = () => {
             count: null
         },
         {
-            id: 'positions',
-            label: 'Positions',
-            icon: Target,
-            count: null
-        },
-        {
             id: 'open-orders',
             label: 'Open Orders',
             icon: FileText,
@@ -47,12 +41,6 @@ const TradeSubNavbar = () => {
                 return (
                     <div className="flex items-center justify-center h-full text-muted-foreground">
                         Top Traders content coming soon...
-                    </div>
-                );
-            case 'positions':
-                return (
-                    <div className="flex items-center justify-center h-full text-muted-foreground">
-                        Positions content coming soon...
                     </div>
                 );
             case 'open-orders':

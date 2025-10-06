@@ -32,27 +32,27 @@ const topTraders = [
         name: "BabyKnight",
         avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=BabyKnight",
         rankBadge: "Challenger",
-        latestStats: "42 - 21",
-        winRate: "64%",
-        kda: "1.23"
+        latestStats: "0.75",
+        winRate: "8%",
+        kda: "$12,456.78"
     },
     {
         rank: 2,
         name: "Rootless",
         avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=Rootless",
         rankBadge: "Challenger",
-        latestStats: "42 - 21",
+        latestStats: "0.68",
         winRate: "64%",
-        kda: "1.23"
+        kda: "$10,234.92"
     },
     {
         rank: 3,
         name: "Teodor2000",
         avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=Teodor2000",
         rankBadge: "Challenger",
-        latestStats: "42 - 21",
-        winRate: "64%",
-        kda: "1.23"
+        latestStats: "0.55",
+        winRate: "56%",
+        kda: "$8,567.45"
     }
 ];
 

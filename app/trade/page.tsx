@@ -2,6 +2,7 @@
 import Chart from "@/components/trade/Chart"
 import TradeSubNavbar from "@/components/trade/TradeSubNavbar"
 import TradingPanel from "@/components/trade/TradingPanel"
+import TraderTicker from "@/components/trade/TraderTicker"
 import {
     ResizableHandle,
     ResizablePanel,
@@ -13,9 +14,10 @@ export default function Trade() {
     return (
         <div className="h-full bg-background  flex flex-col">
             <TradeNavbar />
+            <TraderTicker />
             <ResizablePanelGroup
                 direction="horizontal"
-                className="w-full"
+                className="w-full flex-1"
             >
                 <ResizablePanel defaultSize={95}>
                     <ResizablePanelGroup direction="vertical">
