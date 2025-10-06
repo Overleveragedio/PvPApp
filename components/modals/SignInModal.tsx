@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, ReactNode, useEffect } from 'react'
-import { Connector, useConnect, useAccount } from 'wagmi'
+import { Connector, useConnect, useAccount, useReconnect, useDisconnect } from 'wagmi'
 import { Wallet, ArrowRight, Mail } from 'lucide-react'
 import Image from 'next/image'
 import {
@@ -61,7 +61,8 @@ const ConnectionButton = ({ icon, title, description, onClick, disabled, isLoadi
 )
 
 const SignInModal = ({ isOpen, onClose }: WalletConnectionModalProps) => {
-    const { connectors, connect, isPending } = useConnect()
+    const { connectors, isPending, connectAsync } = useConnect()
+    const { reconnect } = useReconnect()
     const { address, isConnected } = useAccount()
     const [connectingWallet, setConnectingWallet] = useState<string | null>(null)
     const [showEmailSignIn, setShowEmailSignIn] = useState(false)
@@ -87,7 +88,8 @@ const SignInModal = ({ isOpen, onClose }: WalletConnectionModalProps) => {
                 await handleWalletAuth(address)
             } else {
                 // Otherwise, connect first (useEffect will handle auth after)
-                await connect({ connector })
+                await connectAsync({ connector })
+                await handleWalletAuth(address!)
             }
         } catch (error) {
             console.error('Wallet operation failed:', error)
@@ -105,11 +107,12 @@ const SignInModal = ({ isOpen, onClose }: WalletConnectionModalProps) => {
 
             // Sign the nonce message
             const message = formatWalletMessage(nonceResponse.nonce)
+
+            console.log('Message:', message)
             console.log('Signing message:', message)
             const signature = await signWalletMessage(message, walletAddress)
             console.log('Signature received:', signature)
 
-            // Try to verify (sign in) first
             try {
                 console.log('Attempting wallet verification (sign in)...')
                 const response = await verifyWallet({

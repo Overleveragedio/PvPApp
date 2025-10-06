@@ -1,4 +1,7 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+
+import axios from 'axios'
+import { api } from './api'
+
 
 export interface AuthResponse {
     access_token: string
@@ -37,89 +40,76 @@ export interface WalletSignUpRequest {
 
 // Email Authentication
 export const signUpWithEmail = async (data: SignUpRequest): Promise<AuthResponse> => {
-    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-
-    if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Sign up failed')
+    try {
+        const response = await api.post(`/auth/signup`, data)
+        return response.data
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Sign up failed')
+        }
+        throw new Error('Sign up failed')
     }
-
-    return response.json()
 }
 
 export const signInWithEmail = async (data: SignInRequest): Promise<AuthResponse> => {
-    const response = await fetch(`${API_BASE_URL}/auth/signin`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-
-    if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Sign in failed')
+    try {
+        const response = await api.post(`/auth/signin`, data)
+        return response.data
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Sign in failed')
+        }
+        throw new Error('Sign in failed')
     }
-
-    return response.json()
 }
 
 // Wallet Authentication
 export const requestWalletNonce = async (data: WalletNonceRequest): Promise<WalletNonceResponse> => {
-    const response = await fetch(`${API_BASE_URL}/auth/wallet/nonce`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-
-    if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Failed to request nonce')
+    try {
+        const response = await api.post(`/auth/wallet/nonce`, data)
+        return response.data
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Failed to request nonce')
+        }
+        throw new Error('Failed to request nonce')
     }
-
-    return response.json()
 }
 
 export const verifyWallet = async (data: WalletVerifyRequest): Promise<AuthResponse> => {
-    const response = await fetch(`${API_BASE_URL}/auth/wallet/verify`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-
-    if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Wallet verification failed')
+    try {
+        const response = await api.post(`/auth/wallet/verify`, data)
+        return response.data
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Wallet verification failed')
+        }
+        throw new Error('Wallet verification failed')
     }
-
-    return response.json()
 }
 
 export const signUpWithWallet = async (data: WalletSignUpRequest): Promise<AuthResponse> => {
-    const response = await fetch(`${API_BASE_URL}/auth/wallet/signup`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-
-    if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Wallet sign up failed')
+    try {
+        const response = await api.post(`/auth/wallet/signup`, data)
+        return response.data
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message || 'Wallet sign up failed')
+        }
+        throw new Error('Wallet sign up failed')
     }
+}
 
-    return response.json()
+export const signOut = async () => {
+    try {
+        console.log(getTokens().refreshToken)
+        const response = await api.post(`/auth/signout`, {
+            refresh_token: getTokens().refreshToken,
+        })
+        return response.data
+    } catch (error) {
+        throw new Error('Sign out failed')
+    }
 }
 
 // Token Management
@@ -145,9 +135,4 @@ export const clearTokens = () => {
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
     }
-}
-
-export const isAuthenticated = (): boolean => {
-    const { accessToken } = getTokens()
-    return !!accessToken
 }

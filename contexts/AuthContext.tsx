@@ -1,8 +1,10 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { useAccount } from 'wagmi'
-import { getTokens, clearTokens, isAuthenticated as checkAuthStatus } from '@/lib/auth'
+import { useAccount, useDisconnect } from 'wagmi'
+import { clearTokens, getTokens, signOut } from '@/lib/auth'
+import { useQuery } from '@tanstack/react-query'
+import { getUser } from '@/lib/user'
 
 interface AuthContextType {
     isAuthenticated: boolean
@@ -28,30 +30,39 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
+    const { disconnect } = useDisconnect()
     const { address } = useAccount()
 
     useEffect(() => {
-        // Check authentication status on mount
-        const checkAuth = () => {
-            const authStatus = checkAuthStatus()
-            setIsAuthenticated(authStatus)
-            setIsLoading(false)
-        }
-
         checkAuth()
-    }, [])
-
-    useEffect(() => {
-        // Update auth status when wallet address changes
-        if (address) {
-            const authStatus = checkAuthStatus()
-            setIsAuthenticated(authStatus)
-        } else {
-            // If wallet disconnects, check if we still have tokens
-            const authStatus = checkAuthStatus()
-            setIsAuthenticated(authStatus)
-        }
+        console.log("Initial Address:", address)
     }, [address])
+
+    const checkAuth = async () => {
+        const tokens = getTokens()
+        if (tokens.accessToken && tokens.refreshToken) {
+            const user = await getUser()
+            if (user.authProvider === "WALLET" && user.walletAddress) {
+                console.log("Address:", address)
+                if (user.walletAddress.toLowerCase() === address?.toLowerCase()) {
+                    setIsAuthenticated(true)
+                } else {
+                    await signOut()
+                    clearTokens()
+                    setIsAuthenticated(false)
+                    console.log("Sign out")
+                }
+            } else {
+                await signOut()
+                clearTokens()
+                setIsAuthenticated(false)
+            }
+            // setIsAuthenticated(true)
+        } else {
+            setIsAuthenticated(false)
+        }
+        setIsLoading(false)
+    }
 
     const login = () => {
         setIsAuthenticated(true)

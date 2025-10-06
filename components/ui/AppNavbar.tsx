@@ -6,10 +6,13 @@ import { usePathname } from "next/navigation";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import WalletConnectionModal from "../modals/SignInModal";
 import { useState, useRef, useEffect } from "react";
+import { formatAddress, generateUsername } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AppNavbar = () => {
     const pathname = usePathname();
-    const { isModalOpen, openModal, closeModal, isConnected, address, disconnect } = useWalletConnection();
+    const { isModalOpen, openModal, closeModal, address, disconnect } = useWalletConnection();
+    const { isAuthenticated, isLoading } = useAuth()
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -25,14 +28,6 @@ const AppNavbar = () => {
             ? 'text-primary bg-primary/20 nav-link-glow after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-18 after:h-0.5 after:bg-primary after:rounded-full'
             : 'text-slate-300 hover:text-white hover:bg-primary/20'
         }`;
-
-    const formatAddress = (addr: string) => {
-        return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-    };
-
-    const generateUsername = (addr: string) => {
-        return `User${addr.slice(-3)}`;
-    };
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -108,7 +103,7 @@ const AppNavbar = () => {
                         </button>
 
                         {/* Wallet Connection */}
-                        {isConnected ? (
+                        {isAuthenticated ? (
                             <div className="relative" ref={dropdownRef}>
                                 {/* Balance Display */}
                                 <div className="flex items-center gap-3">

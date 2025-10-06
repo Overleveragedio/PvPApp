@@ -15,5 +15,5 @@ export const signWalletMessage = async (message: string, address: `0x${string}`)
 }
 
 export const formatWalletMessage = (nonce: string) => {
-    return `Login nonce: ${nonce}`
+    return `${nonce}`
 }
