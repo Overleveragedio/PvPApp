@@ -47,7 +47,7 @@ export function EquityCurve() {
             value += (Math.random() - 0.45) * 200; // Slight upward bias
 
             data.push({
-                time: date.toISOString().split('T')[0] as any,
+                time: date.toISOString().split('T')[0],
                 value: value,
             });
         }
