@@ -37,11 +37,14 @@ export function BuySellDistribution() {
                         <Legend
                             verticalAlign="bottom"
                             height={36}
-                            formatter={(value, entry: any) => (
-                                <span className="text-sm text-muted-foreground">
-                                    {value}: {entry.payload.value} ({((entry.payload.value / 247) * 100).toFixed(1)}%)
-                                </span>
-                            )}
+                            formatter={(value, entry) => {
+                                const entryValue = (entry as { payload?: { value?: number } }).payload?.value || 0;
+                                return (
+                                    <span className="text-sm text-muted-foreground">
+                                        {value}: {entryValue} ({((entryValue / 247) * 100).toFixed(1)}%)
+                                    </span>
+                                );
+                            }}
                         />
                     </PieChart>
                 </ResponsiveContainer>
