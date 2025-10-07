@@ -18,7 +18,6 @@ export default function AppLayout({
         <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
                 <AuthProvider>
-
                     {/* Fixed Background */}
                     <div className="fixed inset-0 pointer-events-none z-0">
                         {/* Gradient Background */}
