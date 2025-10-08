@@ -17,7 +17,7 @@ interface NavLinksProps {
 const NavLinks = ({ links, className = "" }: NavLinksProps) => {
     const pathname = usePathname();
 
-    const isActive = (path: string) => pathname === path;
+    const isActive = (path: string) => pathname.includes(path);
 
     const getLinkClassName = (path: string) =>
         `flex items-center gap-2 px-3 py-2 rounded-xl transition-all relative ${isActive(path)

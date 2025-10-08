@@ -17,7 +17,7 @@ const Button = ({
     className = '',
     type = 'button'
 }: ButtonProps) => {
-    const baseStyles = "font-semibold rounded-2xl transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer";
+    const baseStyles = "font-semibold transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer";
 
     const variants = {
         primary: "bg-gradient-to-r from-primary to-accent shadow-lg shadow-accent/25 text-black font-bold",
@@ -25,9 +25,9 @@ const Button = ({
     };
 
     const sizes = {
-        sm: "px-4 py-2 text-sm h-8",
-        md: "px-6 py-3 text-base h-10 sm:h-12",
-        lg: "px-8 py-4 text-lg h-12 sm:h-14"
+        sm: "px-4 py-2 text-sm h-8 rounded-lg",
+        md: "px-6 py-3 text-base h-10 sm:h-12 rounded-xl",
+        lg: "px-8 py-4 text-lg h-12 sm:h-14 rounded-2xl"
     };
 
     return (
