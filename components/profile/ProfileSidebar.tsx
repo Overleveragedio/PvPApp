@@ -21,11 +21,11 @@ const ProfileSidebar = () => {
     const menuItems = [
         { icon: User, label: "My Profile", href: "/profile" },
         { icon: BarChart3, label: "Trading Stats", href: "/profile/trading-stats" },
-        { icon: History, label: "Trade History", href: "/profile/history" },
+        // { icon: History, label: "Trade History", href: "/profile/history" },
         { icon: Trophy, label: "My Competitions", href: "/profile/competitions" },
         { icon: Wallet, label: "Wallet & Funds", href: "/profile/wallet" },
         { icon: Settings, label: "Settings", href: "/profile/settings" },
-        { icon: Shield, label: "Security", href: "/profile/security" },
+        // { icon: Shield, label: "Security", href: "/profile/security" },
     ];
 
     const isActive = (path: string) => pathname === path;

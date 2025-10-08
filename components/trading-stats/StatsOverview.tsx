@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, Activity, Target, Award, AlertTriangle, BarChart3 } from "lucide-react";
+import { TrendingUp, Trophy, Target, Gamepad2, DollarSign } from "lucide-react";
 
 interface StatCardProps {
     icon: React.ElementType;
@@ -36,7 +36,7 @@ function StatCard({ icon: Icon, label, value, change, changeType = "neutral", va
 
 export function StatsOverview() {
     return (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <StatCard
                 icon={TrendingUp}
                 label="Total P&L"
@@ -44,6 +44,14 @@ export function StatsOverview() {
                 change="+12.5%"
                 changeType="positive"
                 valueColor="text-green-400"
+            />
+            <StatCard
+                icon={Trophy}
+                label="Top 3"
+                value="8"
+                change="+2"
+                changeType="positive"
+                valueColor="text-primary"
             />
             <StatCard
                 icon={Target}
@@ -54,36 +62,18 @@ export function StatsOverview() {
                 valueColor="text-primary"
             />
             <StatCard
-                icon={Activity}
-                label="Total Trades"
-                value="247"
+                icon={Gamepad2}
+                label="Competitions Played"
+                value="24"
                 valueColor="text-foreground"
             />
             <StatCard
-                icon={BarChart3}
-                label="Profit Factor"
-                value="2.34"
-                change="+0.18"
+                icon={DollarSign}
+                label="Competition Volume"
+                value="$12,450"
+                change="+8.3%"
                 changeType="positive"
-                valueColor="text-primary"
-            />
-            <StatCard
-                icon={Award}
-                label="Best Trade"
-                value="$856.30"
-                valueColor="text-green-400"
-            />
-            <StatCard
-                icon={AlertTriangle}
-                label="Worst Trade"
-                value="-$234.50"
-                valueColor="text-red-400"
-            />
-            <StatCard
-                icon={TrendingDown}
-                label="Avg Win/Loss"
-                value="$87.50"
-                valueColor="text-foreground"
+                valueColor="text-accent"
             />
         </div>
     );
