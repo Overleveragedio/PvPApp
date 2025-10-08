@@ -7,13 +7,12 @@ import { FaXTwitter, FaDiscord } from "react-icons/fa6";
 import { RecentCompetitionsTable } from "@/components/profile/RecentCompetitionsTable";
 import { RecentTradesTable } from "@/components/profile/RecentTradesTable";
 import { WithdrawalHistoryTable } from "@/components/profile/WithdrawalHistoryTable";
-import { StatsCard } from "@/components/profile/StatsCard";
+import { StatsCard } from "@/components/ui/StatsCard";
 import { TotalTradesChart } from "@/components/profile/TotalTradesChart";
 import { TotalPnlChart } from "@/components/profile/TotalPnlChart";
 import { WinRateChart } from "@/components/profile/WinRateChart";
 
 const Profile = () => {
-    const { isAuthenticated } = useAuth();
     const { address } = useWalletConnection();
 
     // Sample data - replace with actual data from API
