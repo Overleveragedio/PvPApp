@@ -6,7 +6,7 @@ import { AssetPerformanceTable } from "@/components/trading-stats/AssetPerforman
 
 export default function TradingStats() {
     return (
-        <div className="h-full flex flex-col gap-6 py-6 px-4 md:px-8 overflow-auto">
+        <div className="h-full flex flex-col gap-6 pb-6 px-4 md:px-8 overflow-auto">
             {/* Top Section - Overview Stats */}
             <StatsOverview />
 

@@ -3,7 +3,7 @@ import { StatsCard } from "@/components/ui/StatsCard";
 
 export function StatsOverview() {
     return (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatsCard
                 icon={TrendingUp}
                 label="Total P&L"
@@ -12,14 +12,14 @@ export function StatsOverview() {
                 changeType="positive"
                 valueColor="text-green-400"
             />
-            <StatsCard
+            {/* <StatsCard
                 icon={Trophy}
                 label="Top 3"
                 value="8"
                 change="+2"
                 changeType="positive"
                 valueColor="text-primary"
-            />
+            /> */}
             <StatsCard
                 icon={Target}
                 label="Win Rate"

@@ -21,7 +21,7 @@ const ProfileSidebar = () => {
     const menuItems = [
         { icon: User, label: "My Profile", href: "/profile" },
         { icon: BarChart3, label: "Trading Stats", href: "/profile/trading-stats" },
-        { icon: Trophy, label: "My Competitions", href: "/profile/competitions" },
+        { icon: Trophy, label: "My Competitions", href: "/profile/my-competitions" },
         { icon: Wallet, label: "Wallet & Funds", href: "/profile/wallets" },
         { icon: Settings, label: "Settings", href: "/profile/settings" },
     ];
