@@ -1,3 +1,4 @@
+import { User } from "@/types/competitions"
 import { api } from "./api"
 
 export const getUser = async (): Promise<User> => {

@@ -17,7 +17,28 @@ export type Competition = {
     _count: {
         participants: number;
     };
+    participants?: Participant[]; // Add this
+};
 
+export type Participant = {
+    id: number;
+    userId: number;
+    competitionId: number;
+    user: User;
+};
+
+export type User = {
+    id: number;
+    email: string;
+    passwordHash: string | null;
+    walletAddress: string | null;
+    username: string;
+    profilePicture: string | null;
+    nonce: string | null;
+    createdAt: string;
+    updatedAt: string;
+    authProvider: "EMAIL" | "WALLET";
+    roles: string;
 };
 
 export type PayoutStructure = {

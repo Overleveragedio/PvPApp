@@ -15,5 +15,9 @@ const getFeaturedCompetition = async () => {
     return response.data
 }
 
+const getCompetitionById = async (id: string) => {
+    const response = await api.get<Competition>(`/competitions/${id}`)
+    return response.data
+}
 
-export { fetchCompetitions, getFeaturedCompetition }
+export { fetchCompetitions, getFeaturedCompetition, getCompetitionById }

@@ -1,4 +1,5 @@
 import TradeLayout from "@/layouts/TradeLayout";
+import { Suspense } from "react";
 
 export default function Layout({
     children,
@@ -7,9 +8,11 @@ export default function Layout({
 }>) {
     return (
         <>
-            <TradeLayout>
-                {children}
-            </TradeLayout>
+            <Suspense>
+                <TradeLayout>
+                    {children}
+                </TradeLayout>
+            </Suspense>
         </>
     );
 }

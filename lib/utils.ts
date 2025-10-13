@@ -60,3 +60,13 @@ export const calculateTimeToStart = (competition: Competition) => {
   }
   return `${hours}h ${minutes}m`;
 };
+
+export const calculateTimeRemainingInSeconds = (competition: Competition) => {
+  if (!competition?.endDate) return 0;
+
+  const now = new Date();
+  const end = new Date(competition.endDate);
+  const diff = Math.floor((end.getTime() - now.getTime()) / 1000); // Convert to seconds
+
+  return diff > 0 ? diff : 0;
+};

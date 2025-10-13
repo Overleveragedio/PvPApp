@@ -201,7 +201,7 @@ const Chart = ({ symbol = 'BTC', interval: initialInterval = '1m' }: ChartProps)
                 <div className="flex items-center gap-4 text-sm">
                     <span className="text-slate-400">Indicators</span>
                     <div className="flex items-center gap-2">
-                        <span className="text-slate-400">{currentInterval} • Hyperliquid</span>
+                        <span className="text-slate-400">{currentInterval}</span>
                         <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                         {marketStats && (
                             <div className="flex items-center gap-4 text-xs">

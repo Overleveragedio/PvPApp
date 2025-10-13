@@ -2,8 +2,9 @@ import { BarChart3, Trophy, Target, FileText, ArrowUpDown, DollarSign, Clock } f
 import { useState } from "react";
 import { clsx } from "clsx";
 import TradesTable from "./TradesTable";
+import { Competition } from "@/types/competitions";
 
-const TradeSubNavbar = () => {
+const TradeSubNavbar = ({ competition }: { competition: Competition }) => {
     const [activeTab, setActiveTab] = useState('trades');
 
     const navItems = [
@@ -36,7 +37,7 @@ const TradeSubNavbar = () => {
     const renderTabContent = () => {
         switch (activeTab) {
             case 'trades':
-                return <TradesTable />;
+                return <TradesTable competition={competition} />;
             case 'top-traders':
                 return (
                     <div className="flex items-center justify-center h-full text-muted-foreground">
@@ -74,7 +75,7 @@ const TradeSubNavbar = () => {
                     </div>
                 );
             default:
-                return <TradesTable />;
+                return <TradesTable competition={competition} />;
         }
     };
 

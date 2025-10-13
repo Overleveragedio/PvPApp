@@ -5,6 +5,7 @@ import { useAccount, useDisconnect } from 'wagmi'
 import { clearTokens, getTokens, signOut } from '@/lib/auth'
 import { getUser } from '@/lib/user'
 import SignInModal from '@/components/modals/SignInModal'
+import { User } from '@/types/competitions'
 
 interface AuthContextType {
     isAuthenticated: boolean
@@ -13,6 +14,7 @@ interface AuthContextType {
     logout: () => void
     openSignInModal: () => void
     closeSignInModal: () => void
+    user: User | null
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -35,6 +37,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [showSignInModal, setShowSignInModal] = useState(false)
     const { disconnect } = useDisconnect()
     const { address } = useAccount()
+    const [user, setUser] = useState<User | null>(null)
 
     useEffect(() => {
         checkAuth()
@@ -51,6 +54,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 console.log("Address:", address)
                 if (user.walletAddress.toLowerCase() === address?.toLowerCase()) {
                     setIsAuthenticated(true)
+                    setUser(user)
                 } else {
                     await signOut()
                     clearTokens()
@@ -62,6 +66,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 await signOut()
                 clearTokens()
                 setIsAuthenticated(false)
+                setUser(null)
             }
             // setIsAuthenticated(true)
         } else {
@@ -94,6 +99,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         logout,
         openSignInModal,
         closeSignInModal,
+        user
     }
 
     return (

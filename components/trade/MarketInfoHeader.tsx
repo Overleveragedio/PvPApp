@@ -80,22 +80,6 @@ const MarketHeader = ({ symbol, marketStats, isLoading }: MarketHeaderProps) => 
                                 {marketStats.marketCap}
                             </div>
                         </div>
-
-                        {/* Contract */}
-                        <div className="text-right">
-                            <div className="text-muted-foreground text-xs mb-1">Contract</div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-white font-semibold">{marketStats.contract}</span>
-                                <div className="flex items-center gap-1">
-                                    <button className="text-muted-foreground hover:text-white transition-colors p-1">
-                                        <ExternalLink className="w-3 h-3" />
-                                    </button>
-                                    <button className="text-muted-foreground hover:text-white transition-colors p-1">
-                                        <Copy className="w-3 h-3" />
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 ) : (
                     <div className="flex items-center gap-8">
