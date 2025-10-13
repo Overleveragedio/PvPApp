@@ -1,6 +1,6 @@
 'use client'
 
-import { Trophy, ChevronDown, ChevronUp } from 'lucide-react'
+import { Trophy, ChevronDown, ChevronUp, LogIn } from 'lucide-react'
 import Button from '@/components/Button'
 import { useState } from 'react'
 import {
@@ -12,6 +12,7 @@ import {
 import Link from 'next/link'
 import { Competition } from '@/types/competitions'
 import { formatEntryFee } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface JoinCompetitionModalProps {
     isOpen: boolean
@@ -21,6 +22,7 @@ interface JoinCompetitionModalProps {
 
 const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionModalProps) => {
     const [showAllPayouts, setShowAllPayouts] = useState(false)
+    const { isAuthenticated, openSignInModal } = useAuth()
 
     if (!competition) return null
 
@@ -52,6 +54,11 @@ const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionM
         ? competition.payoutStructure
         : competition.payoutStructure.slice(0, 3)
     const remainingPayouts = competition.payoutStructure.length - 3
+
+    const handleSignInClick = () => {
+        onClose() // Close the join modal
+        openSignInModal() // Open sign in modal via global state
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -164,16 +171,23 @@ const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionM
                         </div>
                     </div>
 
-                    {/* Join Button */}
-                    <Link href={`/trade?competition=${competition.id}`}>
-                        <Button className="w-full">
-                            <Trophy className="w-4 h-4" />
-                            Join Competition
+                    {/* Action Button - Conditional based on authentication */}
+                    {isAuthenticated ? (
+                        <Link href={`/trade?competition=${competition.id}`}>
+                            <Button className="w-full">
+                                <Trophy className="w-4 h-4" />
+                                Join Competition
+                            </Button>
+                        </Link>
+                    ) : (
+                        <Button className="w-full" onClick={handleSignInClick}>
+                            <LogIn className="w-4 h-4" />
+                            Sign In to Join
                         </Button>
-                    </Link>
+                    )}
 
                     {/* Footer Note - More compact */}
-                    <p className="text-slate-400 text-xs text-center mt-3">
+                    <p className="text-slate-400 text-xs text-center">
                         By joining, you agree to the competition terms and conditions
                     </p>
                 </div>

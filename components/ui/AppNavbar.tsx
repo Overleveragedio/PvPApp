@@ -12,8 +12,9 @@ import UserDropdown, { DropdownMenuItem } from "./navbar/UserDropdown";
 
 const AppNavbar = () => {
     const { isModalOpen, openModal, closeModal, address, disconnect } = useWalletConnection();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, openSignInModal } = useAuth();
     const [isScrolled, setIsScrolled] = useState(false);
+
 
     const navLinks: NavLink[] = [
         { href: "/competitions", icon: Trophy, label: "Competitions" },
@@ -58,7 +59,7 @@ const AppNavbar = () => {
                                 />
                             </>
                         ) : (
-                            <Button size="sm" onClick={openModal}>
+                            <Button size="sm" onClick={openSignInModal}>
                                 Sign In
                             </Button>
                         )}
@@ -67,8 +68,6 @@ const AppNavbar = () => {
             </nav>
 
             <div className="h-[76px]" />
-
-            <WalletConnectionModal isOpen={isModalOpen} onClose={closeModal} />
         </>
     );
 };
