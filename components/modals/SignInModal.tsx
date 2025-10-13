@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, ReactNode, useEffect } from 'react'
-import { Connector, useConnect, useAccount, useReconnect, useDisconnect } from 'wagmi'
+import { Connector, useConnect, useAccount } from 'wagmi'
 import { Wallet, ArrowRight, Mail } from 'lucide-react'
 import Image from 'next/image'
 import {
@@ -62,7 +62,6 @@ const ConnectionButton = ({ icon, title, description, onClick, disabled, isLoadi
 
 const SignInModal = ({ isOpen, onClose }: WalletConnectionModalProps) => {
     const { connectors, isPending, connectAsync } = useConnect()
-    const { reconnect } = useReconnect()
     const { address, isConnected } = useAccount()
     const [connectingWallet, setConnectingWallet] = useState<string | null>(null)
     const [showEmailSignIn, setShowEmailSignIn] = useState(false)
@@ -72,13 +71,6 @@ const SignInModal = ({ isOpen, onClose }: WalletConnectionModalProps) => {
         (connector) => !EXCLUDED_WALLETS.includes(connector.id)
     )
 
-    // Handle wallet authentication when address becomes available
-    useEffect(() => {
-        if (isConnected && address && connectingWallet) {
-            handleWalletAuth(address)
-        }
-    }, [isConnected, address, connectingWallet])
-
     const handleWalletClick = async (connector: Connector) => {
         try {
             setConnectingWallet(connector.id)
@@ -87,9 +79,10 @@ const SignInModal = ({ isOpen, onClose }: WalletConnectionModalProps) => {
             if (isConnected && address) {
                 await handleWalletAuth(address)
             } else {
-                // Otherwise, connect first (useEffect will handle auth after)
-                await connectAsync({ connector })
-                await handleWalletAuth(address!)
+                await connectAsync({ connector }).then((res) => {
+                    console.log(res)
+                    handleWalletAuth(address!)
+                })
             }
         } catch (error) {
             console.error('Wallet operation failed:', error)
@@ -126,14 +119,14 @@ const SignInModal = ({ isOpen, onClose }: WalletConnectionModalProps) => {
             } catch (verifyError) {
                 console.log('Verification failed, attempting sign up...')
                 // If verification fails, try sign up
-                const response = await signUpWithWallet({
-                    address: walletAddress,
-                    signature,
-                })
-                console.log('Wallet sign up successful')
-                setTokens(response.access_token, response.refresh_token)
-                login()
-                onClose()
+                // const response = await signUpWithWallet({
+                //     address: walletAddress,
+                //     signature,
+                // })
+                // console.log('Wallet sign up successful')
+                // setTokens(response.access_token, response.refresh_token)
+                // login()
+                // onClose()
             }
         } catch (error) {
             console.error('Wallet authentication failed:', error)

@@ -1,4 +1,5 @@
 "use client";
+import { Competition } from "@/types/competitions";
 import { Trophy } from "lucide-react";
 
 interface TraderTickerItem {
@@ -71,7 +72,7 @@ const topTraders: TraderTickerItem[] = [
     }
 ];
 
-const TraderTicker = () => {
+const TraderTicker = ({ competition }: { competition: Competition }) => {
     const getTrophyColor = (rank: number) => {
         switch (rank) {
             case 1:

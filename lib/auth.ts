@@ -103,9 +103,7 @@ export const signUpWithWallet = async (data: WalletSignUpRequest): Promise<AuthR
 export const signOut = async () => {
     try {
         console.log(getTokens().refreshToken)
-        const response = await api.post(`/auth/signout`, {
-            refresh_token: getTokens().refreshToken,
-        })
+        const response = await api.post(`/auth/signout`)
         return response.data
     } catch (error) {
         throw new Error('Sign out failed')

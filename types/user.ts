@@ -1,4 +1,4 @@
-type User = {
+export type User = {
     id: number
     email: string | null
     passwordHash: string | null
@@ -6,7 +6,7 @@ type User = {
     authProvider: AuthProviderType
 }
 
-enum AuthProviderType {
+export enum AuthProviderType {
     EMAIL = "EMAIL",
     WALLET = "WALLET"
 }

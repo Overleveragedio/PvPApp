@@ -1,6 +1,7 @@
 import { ExternalLink, ChevronUp, ChevronDown } from "lucide-react";
 import { clsx } from "clsx";
 import { useState } from "react";
+import { Competition } from "@/types/competitions";
 
 interface Trade {
     id: string;
@@ -114,7 +115,7 @@ interface TableColumn {
     sortable: boolean;
 }
 
-const TradesTable = () => {
+const TradesTable = ({ competition }: { competition: Competition }) => {
     const [sortField, setSortField] = useState<SortField>('date');
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 

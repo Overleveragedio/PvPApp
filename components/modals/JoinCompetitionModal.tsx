@@ -1,6 +1,6 @@
 'use client'
 
-import { Trophy, ChevronDown, ChevronUp } from 'lucide-react'
+import { Trophy, ChevronDown, ChevronUp, LogIn } from 'lucide-react'
 import Button from '@/components/Button'
 import { useState } from 'react'
 import {
@@ -10,48 +10,21 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import Link from 'next/link'
+import { Competition } from '@/types/competitions'
+import { formatEntryFee } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface JoinCompetitionModalProps {
     isOpen: boolean
     onClose: () => void
-    competition?: {
-        title: string
-        buyIn: string
-        filled: string
-        maxParticipants: string
-        tradingPairs: string
-        length: string
-        payoutStructure: Array<{
-            position: number
-            amount: string
-            trophy?: boolean
-        }>
-    }
+    competition?: Competition
 }
 
 const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionModalProps) => {
     const [showAllPayouts, setShowAllPayouts] = useState(false)
+    const { isAuthenticated, openSignInModal } = useAuth()
 
-    const defaultCompetition = {
-        title: "DeFi Duel",
-        buyIn: "$10",
-        filled: "0/600",
-        tradingPairs: "BTC/USDT",
-        length: "1 Hour",
-        payoutStructure: [
-            { position: 1, amount: "$3000.00", trophy: true },
-            { position: 2, amount: "$1200.00", trophy: true },
-            { position: 3, amount: "$300.00", trophy: true },
-            { position: 4, amount: "$120.00" },
-            { position: 5, amount: "$258.66" },
-            { position: 6, amount: "$129.33" },
-            { position: 7, amount: "$86.22" },
-            { position: 8, amount: "$64.67" },
-            { position: 9, amount: "$51.73" },
-        ]
-    }
-
-    const comp = competition || defaultCompetition
+    if (!competition) return null
 
     const getTrophyEmoji = (position: number) => {
         switch (position) {
@@ -62,39 +35,89 @@ const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionM
         }
     }
 
+    // Calculate competition duration
+    const calculateDuration = () => {
+        const start = new Date(competition.startDate)
+        const end = new Date(competition.endDate)
+        const diffMs = end.getTime() - start.getTime()
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+        const diffDays = Math.floor(diffHours / 24)
+
+        if (diffDays > 0) {
+            return `${diffDays} Day${diffDays > 1 ? 's' : ''}`
+        }
+        return `${diffHours} Hour${diffHours > 1 ? 's' : ''}`
+    }
+
     // Show only top 3 by default, or all if toggled
-    const visiblePayouts = showAllPayouts ? comp.payoutStructure : comp.payoutStructure.slice(0, 3)
-    const remainingPayouts = comp.payoutStructure.length - 3
+    const visiblePayouts = showAllPayouts
+        ? competition.payoutStructure
+        : competition.payoutStructure.slice(0, 3)
+    const remainingPayouts = competition.payoutStructure.length - 3
+
+    const handleSignInClick = () => {
+        onClose() // Close the join modal
+        openSignInModal() // Open sign in modal via global state
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-bold text-white">
-                        {comp.title}
+                        {competition.name}
                     </DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-6">
-                    {/* Competition Details - 2x2 Grid */}
+                    {/* Competition Details - 2x3 Grid */}
                     <div className="grid grid-cols-2 gap-3">
                         <div className="flex justify-between items-center p-3 bg-background-tertiary rounded-lg">
-                            <span className="text-slate-400 text-sm">Buy-In:</span>
-                            <span className="text-white font-semibold">{comp.buyIn}</span>
+                            <span className="text-slate-400 text-sm">Entry Fee:</span>
+                            <span className="text-white font-semibold">
+                                {formatEntryFee(competition.entryFee)}
+                            </span>
                         </div>
                         <div className="flex justify-between items-center p-3 bg-background-tertiary rounded-lg">
-                            <span className="text-slate-400 text-sm">Filled:</span>
-                            <span className="text-white font-semibold">{comp.filled}</span>
+                            <span className="text-slate-400 text-sm">Prize Pool:</span>
+                            <span className="text-white font-semibold">
+                                ${competition.prizePool.toLocaleString()}
+                            </span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-background-tertiary rounded-lg">
+                            <span className="text-slate-400 text-sm">Participants:</span>
+                            <span className="text-white font-semibold">
+                                {competition._count.participants}/{competition.maxParticipants}
+                            </span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-background-tertiary rounded-lg">
+                            <span className="text-slate-400 text-sm">Leverage:</span>
+                            <span className="text-white font-semibold">
+                                {competition.leverageSize}x
+                            </span>
                         </div>
                         <div className="flex justify-between items-center p-3 bg-background-tertiary rounded-lg">
                             <span className="text-slate-400 text-sm">Trading:</span>
-                            <span className="text-white font-semibold">{comp.tradingPairs}</span>
+                            <span className="text-white font-semibold">
+                                {competition.symbol}
+                            </span>
                         </div>
                         <div className="flex justify-between items-center p-3 bg-background-tertiary rounded-lg">
-                            <span className="text-slate-400 text-sm">Length:</span>
-                            <span className="text-white font-semibold">{comp.length}</span>
+                            <span className="text-slate-400 text-sm">Duration:</span>
+                            <span className="text-white font-semibold">
+                                {calculateDuration()}
+                            </span>
                         </div>
                     </div>
+
+                    {/* Competition Description */}
+                    {competition.description && (
+                        <div className="p-4 bg-background-tertiary rounded-lg">
+                            <p className="text-slate-300 text-sm leading-relaxed">
+                                {competition.description}
+                            </p>
+                        </div>
+                    )}
 
                     {/* Payout Structure - Compact */}
                     <div>
@@ -119,39 +142,49 @@ const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionM
                         </div>
 
                         <div className={`space-y-2 ${showAllPayouts ? 'max-h-48 overflow-y-auto pr-2' : ''}`}>
-                            {visiblePayouts.map((payout, index) => (
-                                <div
-                                    key={index}
-                                    className={`flex justify-between items-center py-2 px-3 rounded-lg border transition-all ${payout.trophy
-                                        ? 'bg-primary/10 border-primary/30'
-                                        : 'bg-background-tertiary border-slate-700/30'
-                                        }`}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <span className={`text-sm ${payout.trophy ? 'text-primary' : 'text-slate-400'}`}>
-                                            Position {payout.position}
-                                        </span>
-                                        {payout.trophy && (
-                                            <span className="text-base">
-                                                {getTrophyEmoji(payout.position)}
+                            {visiblePayouts.map((payout) => {
+                                const isTopThree = payout.position <= 3
+                                return (
+                                    <div
+                                        key={payout.position}
+                                        className={`flex justify-between items-center py-2 px-3 rounded-lg border transition-all ${isTopThree
+                                            ? 'bg-primary/10 border-primary/30'
+                                            : 'bg-background-tertiary border-slate-700/30'
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <span className={`text-sm ${isTopThree ? 'text-primary' : 'text-slate-400'}`}>
+                                                Position {payout.position}
                                             </span>
-                                        )}
+                                            {isTopThree && (
+                                                <span className="text-base">
+                                                    {getTrophyEmoji(payout.position)}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <span className={`font-semibold ${isTopThree ? 'text-primary' : 'text-white'}`}>
+                                            ${parseFloat(payout.amount).toLocaleString()}
+                                        </span>
                                     </div>
-                                    <span className={`font-semibold ${payout.trophy ? 'text-primary' : 'text-white'}`}>
-                                        {payout.amount}
-                                    </span>
-                                </div>
-                            ))}
+                                )
+                            })}
                         </div>
                     </div>
 
-                    {/* Join Button */}
-                    <Link href={"/trade"}>
-                        <Button className="w-full">
-                            <Trophy className="w-4 h-4" />
-                            Join Competition
+                    {/* Action Button - Conditional based on authentication */}
+                    {isAuthenticated ? (
+                        <Link href={`/trade?competition=${competition.id}`}>
+                            <Button className="w-full">
+                                <Trophy className="w-4 h-4" />
+                                Join Competition
+                            </Button>
+                        </Link>
+                    ) : (
+                        <Button className="w-full" onClick={handleSignInClick}>
+                            <LogIn className="w-4 h-4" />
+                            Sign In to Join
                         </Button>
-                    </Link>
+                    )}
 
                     {/* Footer Note - More compact */}
                     <p className="text-slate-400 text-xs text-center">

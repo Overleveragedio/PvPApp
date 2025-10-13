@@ -3,48 +3,17 @@ import { Search } from "lucide-react";
 import CompetitionCard from "@/components/competitions/CompetitionCard";
 import TabNavigation from "@/components/ui/TabNavigation";
 import Select from "@/components/ui/FilterSelect";
-
-const competitionsData = [
-    {
-        status: "COMPLETED" as const,
-        leverage: "30x",
-        title: "Weekend Warrior Championship",
-        description: "Trade all weekend long across multiple pairs. Epic prizes await!",
-        prizePool: "$12,000",
-        participants: "60/60",
-        entryFee: "$200",
-        tradingPairs: ["BTC/USDT", "ETH/USDT", "BNB/USDT"],
-        showViewResults: true
-    },
-    {
-        status: "LIVE" as const,
-        leverage: "10x",
-        title: "Practice Arena - Free Play",
-        description: "Practice your trading skills with no entry fee. Perfect for beginners!",
-        prizePool: "$0",
-        participants: "156/200",
-        entryFee: "$0",
-        endsIn: "0h 0m",
-        tradingPairs: ["BTC/USDT", "ETH/USDT"]
-    },
-    {
-        status: "LIVE" as const,
-        leverage: "50x",
-        title: "Bitcoin Bull Run Championship",
-        description: "Trade BTC/USDT with up to 50x leverage. Winner takes $5,000!",
-        prizePool: "$10,000",
-        participants: "87/100",
-        entryFee: "$100",
-        endsIn: "0h 0m",
-        tradingPairs: ["BTC/USDT"]
-    }
-];
+import { useQuery } from "@tanstack/react-query";
+import { fetchCompetitions } from "@/lib/competitions";
+import { use, useEffect, useState } from "react";
+import { CompetitionStatus } from "@/types/competitions";
+import CompetitionCardSkeleton from "@/components/competitions/Skeleton";
 
 const tabsData = [
     { id: "all", label: "All", count: 24 },
     { id: "live", label: "Live", count: 8 },
     { id: "upcoming", label: "Upcoming", count: 12 },
-    { id: "my-competitions", label: "My Competitions", count: 3 }
+    { id: "completed", label: "Completed", count: 3 }
 ];
 
 const tradingPairsOptions = [
@@ -60,8 +29,35 @@ const startTimeOptions = [
 ];
 
 const Board = () => {
+    const [status, setStatus] = useState(CompetitionStatus.ALL)
+    const {
+        data: competitions,
+        isLoading,
+        refetch,
+    } = useQuery({
+        queryKey: ['competitions'],
+        queryFn: () => fetchCompetitions(status),
+    })
+
+    useEffect(() => {
+        refetch()
+    }, [status])
+
     const handleTabChange = (tabId: string) => {
-        console.log("Active tab:", tabId);
+        switch (tabId) {
+            case "all":
+                setStatus(CompetitionStatus.ALL)
+                break;
+            case "live":
+                setStatus(CompetitionStatus.LIVE)
+                break;
+            case "upcoming":
+                setStatus(CompetitionStatus.PENDING)
+                break;
+            case "completed":
+                setStatus(CompetitionStatus.ENDED)
+                break;
+        }
     };
 
     const handleTradingPairChange = (value: string) => {
@@ -113,11 +109,19 @@ const Board = () => {
                         className=""
                     />
                 </div>
-
                 {/* Competitions Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {competitionsData.map((competition, index) => (
-                        <CompetitionCard key={index} {...competition} />
+                    {
+                        isLoading && (
+                            <>
+                                <CompetitionCardSkeleton />
+                                <CompetitionCardSkeleton />
+                                <CompetitionCardSkeleton />
+                            </>
+                        )
+                    }
+                    {competitions?.map((competition) => (
+                        <CompetitionCard key={competition.id} competition={competition} />
                     ))}
                 </div>
             </div>

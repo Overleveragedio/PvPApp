@@ -1,8 +1,11 @@
 "use client"
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { clsx } from "clsx";
-import { ChevronDown, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 import SectionHeading from "../typography/SectionHeading";
+import { Competition } from "@/types/competitions";
+import { calculateTimeRemainingInSeconds } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface CompetitionTrader {
     rank: number;
@@ -12,87 +15,34 @@ interface CompetitionTrader {
     isCurrentUser?: boolean;
 }
 
-const mockCompetitionData: CompetitionTrader[] = [
-    {
-        rank: 1,
-        username: "BabyKnight",
-        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=BabyKnight",
-        gain: "+45.32%"
-    },
-    {
-        rank: 2,
-        username: "Rootless",
-        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=Rootless",
-        gain: "+38.75%"
-    },
-    {
-        rank: 3,
-        username: "Teodor2000",
-        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=Teodor2000",
-        gain: "+32.18%"
-    },
-    {
-        rank: 4,
-        username: "CryptoNinja",
-        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=CryptoNinja",
-        gain: "+28.94%"
-    },
-    {
-        rank: 5,
-        username: "MoonWalker",
-        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=MoonWalker",
-        gain: "+25.67%",
-        isCurrentUser: true
-    },
-    {
-        rank: 6,
-        username: "DiamondHands",
-        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=DiamondHands",
-        gain: "+22.41%"
-    },
-    {
-        rank: 7,
-        username: "WhaleTrader",
-        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=WhaleTrader",
-        gain: "+19.85%"
-    },
-    {
-        rank: 8,
-        username: "BullRunner",
-        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=BullRunner",
-        gain: "+15.23%"
-    },
-    {
-        rank: 9,
-        username: "SatoshiFan",
-        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=SatoshiFan",
-        gain: "+12.56%"
-    },
-    {
-        rank: 10,
-        username: "DegenKing",
-        avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=DegenKing",
-        gain: "+8.94%"
-    }
-];
-
-const TradingPanel = () => {
-    const [orderType, setOrderType] = useState<'Market' | 'Limit' | 'Pro'>('Market');
+const TradingPanel = ({ competition }: { competition: Competition }) => {
+    const { user } = useAuth();
     const [tradeType, setTradeType] = useState<'Buy' | 'Sell'>('Buy');
     const [size, setSize] = useState('');
-    const [leverage, setLeverage] = useState(52);
-    const [asset, setAsset] = useState('');
-    // Timer state - Initialize with 42 minutes and 18 seconds (in seconds)
-    const [timeRemaining, setTimeRemaining] = useState(42 * 60 + 18);
+    const [timeRemaining, setTimeRemaining] = useState(() =>
+        calculateTimeRemainingInSeconds(competition)
+    );
 
-    const orderTypes = ['Market'] as const;
+    // Transform competition participants into CompetitionTrader format
+    const competitionData: CompetitionTrader[] = useMemo(() => {
+        if (!competition?.participants || competition.participants.length === 0) {
+            return [];
+        }
 
-    const handleLeverageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setLeverage(Number(e.target.value));
-    };
+        return competition.participants.map((participant, index) => ({
+            rank: index + 1, // TODO: Replace with actual rank from leaderboard API
+            username: participant.user.username,
+            avatar: participant.user.profilePicture ||
+                `https://api.dicebear.com/7.x/pixel-art/svg?seed=${participant.user.username}`,
+            gain: "+0.00%", // TODO: Replace with actual gain from leaderboard API
+            isCurrentUser: user?.id === participant.user.id
+        }));
+    }, [competition?.participants, user?.id]);
 
-    // Countdown timer effect
     useEffect(() => {
+        // Recalculate when competition changes
+        setTimeRemaining(calculateTimeRemainingInSeconds(competition));
+
         const timer = setInterval(() => {
             setTimeRemaining((prev) => {
                 if (prev <= 0) {
@@ -104,7 +54,22 @@ const TradingPanel = () => {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, []);
+    }, [competition]);
+
+    const formatTime = (seconds: number) => {
+        const days = Math.floor(seconds / 86400); // 86400 seconds in a day
+        const hours = Math.floor((seconds % 86400) / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+
+        if (days > 0) {
+            return `${days}d ${hours}h ${minutes}m ${secs}s`;
+        }
+        if (hours > 0) {
+            return `${hours}h ${minutes}m ${secs}s`;
+        }
+        return `${minutes}m ${secs}s`;
+    };
 
     const getTrophyColor = (rank: number) => {
         switch (rank) {
@@ -132,17 +97,6 @@ const TradingPanel = () => {
         }
     };
 
-    const formatTime = (seconds: number) => {
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const secs = seconds % 60;
-
-        if (hours > 0) {
-            return `${hours}h ${minutes}m ${secs}s`;
-        }
-        return `${minutes}m ${secs}s`;
-    };
-
     return (
         <div className="h-full bg-background border-l border-border flex flex-col">
 
@@ -151,12 +105,12 @@ const TradingPanel = () => {
                 <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-1.5">
                         <Trophy className="w-3.5 h-3.5 text-primary" />
-                        <span className="text-xs font-semibold text-white">Bitcoin Bull Run Championship</span>
+                        <span className="text-xs font-semibold text-white">{competition?.name}</span>
                     </div>
                     <span className="text-xs text-primary font-medium">Live</span>
                 </div>
                 <div className="text-[11px] text-muted-foreground">
-                    Ends in {formatTime(timeRemaining)} • {mockCompetitionData.length} traders
+                    Ends in {formatTime(timeRemaining)} • {competition?._count.participants || 0} traders
                 </div>
             </div>
 
@@ -211,17 +165,13 @@ const TradingPanel = () => {
                 {/* Available to Trade */}
                 <div className="flex justify-between items-center text-sm">
                     <span className="text-muted-foreground">Available to Trade</span>
-                    <span className="text-foreground">0.00 BTC</span>
+                    <span className="text-foreground">0.00 {competition?.symbol}</span>
                 </div>
 
                 {/* Size Input */}
                 <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                        <label className="text-sm text-muted-foreground">Size</label>
-                        <div className="flex items-center gap-1">
-                            <span className="text-sm text-foreground">{asset}</span>
-                            <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                        </div>
+                        <label className="text-sm text-muted-foreground">Size ({competition?.symbol?.split("/")[0]})</label>
                     </div>
                     <input
                         type="number"
@@ -236,7 +186,7 @@ const TradingPanel = () => {
                 <div className="space-y-2 text-xs text-muted-foreground">
                     <div className="flex justify-between">
                         <span>Est. Margin</span>
-                        <span>50x</span>
+                        <span>{competition?.leverageSize}x</span>
                     </div>
                 </div>
 
@@ -249,7 +199,7 @@ const TradingPanel = () => {
                             : "bg-destructive hover:bg-destructive/90 text-white"
                     )}
                 >
-                    {tradeType} {asset}
+                    {tradeType}
                 </button>
 
                 {/* Divider */}
@@ -259,58 +209,67 @@ const TradingPanel = () => {
             {/* Leaderboard List - Scrollable */}
             <div className="flex-1 overflow-y-auto px-4 pb-4">
                 <SectionHeading className="mb-3">Competitors</SectionHeading>
-                <div className="space-y-1">
-                    {mockCompetitionData.map((trader) => (
-                        <div
-                            key={trader.rank}
-                            className={clsx(
-                                "flex items-center gap-2 p-2 rounded-lg transition-colors",
-                                trader.isCurrentUser
-                                    ? "bg-primary/10 border border-primary/30"
-                                    : "bg-slate-800/30 hover:bg-slate-800/50"
-                            )}
-                        >
-                            {/* Rank with Trophy */}
-                            <div className="flex items-center justify-center w-5 flex-shrink-0">
-                                {trader.rank <= 3 ? (
-                                    <Trophy
-                                        className={`w-3.5 h-3.5 ${getTrophyColor(trader.rank)}`}
-                                        fill="currentColor"
+                {competitionData.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground text-sm">
+                        No competitors yet
+                    </div>
+                ) : (
+                    <div className="space-y-1">
+                        {competitionData.map((trader) => (
+                            <div
+                                key={trader.rank}
+                                className={clsx(
+                                    "flex items-center gap-2 p-2 rounded-lg transition-colors",
+                                    trader.isCurrentUser
+                                        ? "bg-primary/10 border border-primary/30"
+                                        : "bg-slate-800/30 hover:bg-slate-800/50"
+                                )}
+                            >
+                                {/* Rank with Trophy */}
+                                <div className="flex items-center justify-center w-5 flex-shrink-0">
+                                    {trader.rank <= 3 ? (
+                                        <Trophy
+                                            className={`w-3.5 h-3.5 ${getTrophyColor(trader.rank)}`}
+                                            fill="currentColor"
+                                        />
+                                    ) : (
+                                        <span className={`text-[11px] font-semibold ${getRankColor(trader.rank)}`}>
+                                            {trader.rank}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Avatar */}
+                                <div className="w-6 h-6 rounded-full overflow-hidden bg-background-tertiary flex-shrink-0 ring-1 ring-slate-700/50">
+                                    <img
+                                        src={trader.avatar}
+                                        alt={trader.username}
+                                        className="w-full h-full object-cover"
+                                        style={{ imageRendering: 'pixelated' }}
                                     />
-                                ) : (
-                                    <span className={`text-[11px] font-semibold ${getRankColor(trader.rank)}`}>
-                                        {trader.rank}
+                                </div>
+
+                                {/* Username */}
+                                <div className="flex-1 min-w-0">
+                                    <span className="text-white text-[11px] font-medium truncate block">
+                                        {trader.username}
                                     </span>
-                                )}
-                            </div>
+                                    {trader.isCurrentUser && (
+                                        <span className="text-primary text-[9px]">You</span>
+                                    )}
+                                </div>
 
-                            {/* Avatar */}
-                            <div className="w-6 h-6 rounded-full overflow-hidden bg-background-tertiary flex-shrink-0 ring-1 ring-slate-700/50">
-                                <img
-                                    src={trader.avatar}
-                                    alt={trader.username}
-                                    className="w-full h-full object-cover"
-                                    style={{ imageRendering: 'pixelated' }}
-                                />
-                            </div>
-
-                            {/* Username */}
-                            <div className="flex-1 min-w-0">
-                                <span className="text-white text-[11px] font-medium truncate block">
-                                    {trader.username}
+                                {/* Gain */}
+                                <span className={clsx(
+                                    "text-[11px] font-semibold flex-shrink-0",
+                                    trader.gain.startsWith('+') ? "text-green-500" : "text-red-500"
+                                )}>
+                                    {trader.gain}
                                 </span>
-                                {trader.isCurrentUser && (
-                                    <span className="text-primary text-[9px]">You</span>
-                                )}
                             </div>
-
-                            {/* Gain */}
-                            <span className="text-green-500 text-[11px] font-semibold flex-shrink-0">
-                                {trader.gain}
-                            </span>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );
