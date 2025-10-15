@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (tokens.accessToken && tokens.refreshToken) {
             const user = await getUser()
             console.log("User:", user)
-            if (user.authProvider === "WALLET" && user.walletAddress) {
+            if (user && user.authProvider === "WALLET" && user.walletAddress) {
                 console.log("User:", user)
                 console.log("Address:", address)
                 if (user.walletAddress.toLowerCase() === address?.toLowerCase()) {
