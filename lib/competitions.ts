@@ -11,7 +11,12 @@ const getCompetitionById = async (id: string) => {
     return response.data
 }
 
-const filterCompetitions = async (params: any) => {
+const filterCompetitions = async (params: {
+    status?: CompetitionStatus
+    search?: string
+    page?: number
+    limit?: number
+}) => {
     const response = await api.get<PaginatedResponse<Competition>>('/competitions/filter', {
         params: params
     })

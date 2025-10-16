@@ -120,7 +120,7 @@ const EmailSignInModal = ({ isOpen, onClose }: EmailSignInModalProps) => {
             }
 
             // Store tokens
-            setTokens(response.access_token, response.refresh_token)
+            setTokens(response.refresh_token)
 
             // Update auth context
             login()
