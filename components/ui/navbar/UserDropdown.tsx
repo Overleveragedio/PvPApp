@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronDown, LogOut, LucideIcon } from "lucide-react";
 import { formatAddress, generateUsername } from "@/lib/utils";
 import UserAvatar from "./UserAvatar";
+import { useAuth } from "@/contexts/AuthContext";
 export interface DropdownMenuItem {
     icon: LucideIcon;
     label: string;
@@ -19,6 +20,7 @@ interface UserDropdownProps {
 const UserDropdown = ({ address, menuItems, onDisconnect }: UserDropdownProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const { user } = useAuth()
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -41,7 +43,7 @@ const UserDropdown = ({ address, menuItems, onDisconnect }: UserDropdownProps) =
                 <UserAvatar address={address} size="sm" />
                 <div className="text-left">
                     <div className="text-white text-sm font-medium">
-                        {generateUsername(address)}
+                        {user?.username}
                     </div>
                     <div className="text-slate-400 text-xs">Connected</div>
                 </div>
@@ -57,7 +59,7 @@ const UserDropdown = ({ address, menuItems, onDisconnect }: UserDropdownProps) =
                             <UserAvatar address={address} size="md" />
                             <div>
                                 <div className="text-white font-medium">
-                                    {generateUsername(address)}
+                                    {user?.username}
                                 </div>
                                 <div className="text-slate-400 text-sm">
                                     {formatAddress(address)}
