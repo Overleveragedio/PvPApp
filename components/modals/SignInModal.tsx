@@ -80,8 +80,7 @@ const SignInModal = ({ isOpen, onClose }: WalletConnectionModalProps) => {
                 await handleWalletAuth(address)
             } else {
                 await connectAsync({ connector }).then((res) => {
-                    console.log(res)
-                    handleWalletAuth(address!)
+                    handleWalletAuth(res.accounts[0])
                 })
             }
         } catch (error) {
@@ -100,33 +99,18 @@ const SignInModal = ({ isOpen, onClose }: WalletConnectionModalProps) => {
 
             // Sign the nonce message
             const message = formatWalletMessage(nonceResponse.nonce)
-
-            console.log('Message:', message)
-            console.log('Signing message:', message)
             const signature = await signWalletMessage(message, walletAddress)
-            console.log('Signature received:', signature)
 
             try {
-                console.log('Attempting wallet verification (sign in)...')
                 const response = await verifyWallet({
                     address: walletAddress,
                     signature,
                 })
-                console.log('Wallet verification successful')
-                setTokens(response.access_token, response.refresh_token)
+                setTokens(response.refresh_token)
                 login()
                 onClose()
             } catch (verifyError) {
                 console.log('Verification failed, attempting sign up...')
-                // If verification fails, try sign up
-                // const response = await signUpWithWallet({
-                //     address: walletAddress,
-                //     signature,
-                // })
-                // console.log('Wallet sign up successful')
-                // setTokens(response.access_token, response.refresh_token)
-                // login()
-                // onClose()
             }
         } catch (error) {
             console.error('Wallet authentication failed:', error)

@@ -1,10 +1,6 @@
-
-import axios from 'axios'
 import { api } from './api'
 
-
 export interface AuthResponse {
-    access_token: string
     refresh_token: string
 }
 
@@ -38,82 +34,44 @@ export interface WalletSignUpRequest {
     signature: string
 }
 
-// Email Authentication
 export const signUpWithEmail = async (data: SignUpRequest): Promise<AuthResponse> => {
-    try {
-        const response = await api.post(`/auth/signup`, data)
-        return response.data
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            throw new Error(error.response.data.message || 'Sign up failed')
-        }
-        throw new Error('Sign up failed')
-    }
+    const response = await api.post(`/auth/signup`, data)
+    return response.data
 }
 
 export const signInWithEmail = async (data: SignInRequest): Promise<AuthResponse> => {
-    try {
-        const response = await api.post(`/auth/signin`, data)
-        return response.data
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            throw new Error(error.response.data.message || 'Sign in failed')
-        }
-        throw new Error('Sign in failed')
-    }
+    const response = await api.post(`/auth/signin`, data)
+    return response.data
 }
 
-// Wallet Authentication
 export const requestWalletNonce = async (data: WalletNonceRequest): Promise<WalletNonceResponse> => {
-    try {
-        const response = await api.post(`/auth/wallet/nonce`, data)
-        return response.data
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            throw new Error(error.response.data.message || 'Failed to request nonce')
-        }
-        throw new Error('Failed to request nonce')
-    }
+    const response = await api.post(`/auth/wallet/nonce`, data)
+    return response.data
 }
 
 export const verifyWallet = async (data: WalletVerifyRequest): Promise<AuthResponse> => {
-    try {
-        const response = await api.post(`/auth/wallet/verify`, data)
-        return response.data
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            throw new Error(error.response.data.message || 'Wallet verification failed')
-        }
-        throw new Error('Wallet verification failed')
-    }
+    const response = await api.post(`/auth/wallet/verify`, data)
+    return response.data
 }
 
 export const signUpWithWallet = async (data: WalletSignUpRequest): Promise<AuthResponse> => {
-    try {
-        const response = await api.post(`/auth/wallet/signup`, data)
-        return response.data
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            throw new Error(error.response.data.message || 'Wallet sign up failed')
-        }
-        throw new Error('Wallet sign up failed')
-    }
+    const response = await api.post(`/auth/wallet/signup`, data)
+    return response.data
 }
 
 export const signOut = async () => {
-    try {
-        console.log(getTokens().refreshToken)
-        const response = await api.post(`/auth/signout`)
-        return response.data
-    } catch (error) {
-        throw new Error('Sign out failed')
-    }
+    const { refreshToken } = getTokens()
+    const response = await api.post(`/auth/signout`, { refresh_token: refreshToken })
+    return response.data
 }
 
-// Token Management
-export const setTokens = (accessToken: string, refreshToken: string) => {
+export const refreshAccessToken = async (refreshToken: string): Promise<AuthResponse> => {
+    const response = await api.post(`/auth/refresh`, { refresh_token: refreshToken })
+    return response.data
+}
+
+export const setTokens = (refreshToken: string) => {
     if (typeof window !== 'undefined') {
-        localStorage.setItem('access_token', accessToken)
         localStorage.setItem('refresh_token', refreshToken)
     }
 }
@@ -121,11 +79,10 @@ export const setTokens = (accessToken: string, refreshToken: string) => {
 export const getTokens = () => {
     if (typeof window !== 'undefined') {
         return {
-            accessToken: localStorage.getItem('access_token'),
             refreshToken: localStorage.getItem('refresh_token'),
         }
     }
-    return { accessToken: null, refreshToken: null }
+    return { refreshToken: null }
 }
 
 export const clearTokens = () => {

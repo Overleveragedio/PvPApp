@@ -12,7 +12,6 @@ import TradeNavbar from "@/components/ui/TradeNavbar"
 import { useSearchParams } from "next/navigation"
 import { getCompetitionById } from "@/lib/competitions"
 import { useQuery } from "@tanstack/react-query"
-import { Suspense } from "react"
 
 export default function Trade() {
     const searchParams = useSearchParams()
@@ -20,11 +19,9 @@ export default function Trade() {
     const { data: competition, isLoading, error } = useQuery({
         queryKey: ['competition', competitionId],
         queryFn: () => getCompetitionById(competitionId!),
-        enabled: !!competitionId, // Only fetch if competitionId exists
+        enabled: !!competitionId,
     })
-    console.log("Competition:", competition)
 
-    // Loading state
     if (isLoading) {
         return (
             <div className="h-full bg-background flex flex-col">
@@ -39,7 +36,6 @@ export default function Trade() {
         )
     }
 
-    // Error state
     if (error) {
         return (
             <div className="h-full bg-background flex flex-col">
@@ -57,7 +53,6 @@ export default function Trade() {
         )
     }
 
-    // No competition ID provided
     if (!competitionId) {
         return (
             <div className="h-full bg-background flex flex-col">

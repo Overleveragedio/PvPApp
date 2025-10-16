@@ -70,3 +70,15 @@ export const calculateTimeRemainingInSeconds = (competition: Competition) => {
 
   return diff > 0 ? diff : 0;
 };
+
+export const calculateDuration = (competition: Competition) => {
+  const start = new Date(competition.startDate)
+  const end = new Date(competition.endDate)
+  const diffMs = end.getTime() - start.getTime()
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+  const diffDays = Math.floor(diffHours / 24)
+  if (diffDays > 0) {
+    return `${diffDays} Day${diffDays > 1 ? 's' : ''}`
+  }
+  return `${diffHours} Hour${diffHours > 1 ? 's' : ''}`
+}

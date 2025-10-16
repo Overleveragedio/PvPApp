@@ -9,10 +9,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-import Link from 'next/link'
 import { Competition } from '@/types/competitions'
-import { formatEntryFee } from '@/lib/utils'
+import { calculateDuration, formatEntryFee } from '@/lib/utils'
 import { useAuth } from '@/contexts/AuthContext'
+import { createParticipant } from '@/lib/participants'
+import { useStatusDialog } from '@/contexts/StatusDialogContext'
+import { useRouter } from 'next/navigation'
 
 interface JoinCompetitionModalProps {
     isOpen: boolean
@@ -23,6 +25,8 @@ interface JoinCompetitionModalProps {
 const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionModalProps) => {
     const [showAllPayouts, setShowAllPayouts] = useState(false)
     const { isAuthenticated, openSignInModal } = useAuth()
+    const { showError, showSuccess, showWarning } = useStatusDialog()
+    const router = useRouter()
 
     if (!competition) return null
 
@@ -35,29 +39,30 @@ const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionM
         }
     }
 
-    // Calculate competition duration
-    const calculateDuration = () => {
-        const start = new Date(competition.startDate)
-        const end = new Date(competition.endDate)
-        const diffMs = end.getTime() - start.getTime()
-        const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-        const diffDays = Math.floor(diffHours / 24)
-
-        if (diffDays > 0) {
-            return `${diffDays} Day${diffDays > 1 ? 's' : ''}`
-        }
-        return `${diffHours} Hour${diffHours > 1 ? 's' : ''}`
-    }
-
-    // Show only top 3 by default, or all if toggled
     const visiblePayouts = showAllPayouts
         ? competition.payoutStructure
         : competition.payoutStructure.slice(0, 3)
     const remainingPayouts = competition.payoutStructure.length - 3
 
     const handleSignInClick = () => {
-        onClose() // Close the join modal
-        openSignInModal() // Open sign in modal via global state
+        onClose()
+        openSignInModal()
+    }
+
+    const handleJoinCompetition = async () => {
+        await createParticipant(competition.id)
+            .then(() => {
+                onClose()
+                router.push(`/trade?competition=${competition.id}`)
+            })
+            .catch((error) => {
+                console.error(error)
+
+                showError({
+                    message: 'Failed to join competition',
+                    submessage: 'Please try again later'
+                })
+            })
     }
 
     return (
@@ -105,7 +110,7 @@ const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionM
                         <div className="flex justify-between items-center p-3 bg-background-tertiary rounded-lg">
                             <span className="text-slate-400 text-sm">Duration:</span>
                             <span className="text-white font-semibold">
-                                {calculateDuration()}
+                                {calculateDuration(competition)}
                             </span>
                         </div>
                     </div>
@@ -173,14 +178,18 @@ const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionM
 
                     {/* Action Button - Conditional based on authentication */}
                     {isAuthenticated ? (
-                        <Link href={`/trade?competition=${competition.id}`}>
-                            <Button className="w-full">
-                                <Trophy className="w-4 h-4" />
-                                Join Competition
-                            </Button>
-                        </Link>
+                        <Button
+                            className="w-full"
+                            onClick={handleJoinCompetition}
+                        >
+                            <Trophy className="w-4 h-4" />
+                            Join Competition
+                        </Button>
                     ) : (
-                        <Button className="w-full" onClick={handleSignInClick}>
+                        <Button
+                            className="w-full"
+                            onClick={handleSignInClick}
+                        >
                             <LogIn className="w-4 h-4" />
                             Sign In to Join
                         </Button>
@@ -196,4 +205,4 @@ const JoinCompetitionModal = ({ isOpen, onClose, competition }: JoinCompetitionM
     )
 }
 
-export default JoinCompetitionModal
+export default JoinCompetitionModal;

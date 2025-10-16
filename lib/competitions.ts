@@ -1,14 +1,5 @@
-import { Competition, CompetitionStatus } from "@/types/competitions"
+import { Competition, CompetitionStatus, PaginatedResponse } from "@/types/competitions"
 import { api } from "./api"
-
-const fetchCompetitions = async (status?: CompetitionStatus) => {
-    const response = await api.get<Competition[]>('/competitions', {
-        params: {
-            status
-        }
-    })
-    return response.data
-}
 
 const getFeaturedCompetition = async () => {
     const response = await api.get<Competition>('/competitions/featured')
@@ -20,4 +11,20 @@ const getCompetitionById = async (id: string) => {
     return response.data
 }
 
-export { fetchCompetitions, getFeaturedCompetition, getCompetitionById }
+const filterCompetitions = async (params: {
+    status?: CompetitionStatus
+    search?: string
+    page?: number
+    limit?: number
+}) => {
+    const response = await api.get<PaginatedResponse<Competition>>('/competitions/filter', {
+        params: params
+    })
+    return response.data
+}
+
+export {
+    getFeaturedCompetition,
+    getCompetitionById,
+    filterCompetitions
+}
