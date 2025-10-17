@@ -98,6 +98,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const handleSignOut = async () => {
         await signOut()
+        disconnect()
         clearTokens()
         setIsAuthenticated(false)
     }

@@ -2,8 +2,10 @@
 import { useState } from "react";
 import { SocialAccountCard, SocialAccount } from "@/components/settings/SocialAccountCard";
 import { FaTelegram, FaDiscord } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
 
 export function ConnectedAccounts() {
+    const router = useRouter();
     const [accounts, setAccounts] = useState<SocialAccount[]>([
         {
             id: "telegram",
@@ -25,9 +27,11 @@ export function ConnectedAccounts() {
 
     const handleConnect = (id: string) => {
         console.log(`Connecting ${id}...`);
-        setAccounts(accounts.map(account =>
-            account.id === id ? { ...account, isConnected: true } : account
-        ));
+        router.push("https://discord.com/oauth2/authorize?client_id=1428774909517238445&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fredirect%2Fdiscord&scope=identify");
+
+        // setAccounts(accounts.map(account =>
+        //     account.id === id ? { ...account, isConnected: true } : account
+        // ));
     };
 
     const handleDisconnect = (id: string) => {
